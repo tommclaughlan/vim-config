@@ -1,5 +1,7 @@
 set shell=/bin/bash
 
+set termguicolors
+
 set nocompatible
 filetype off
 
@@ -11,48 +13,63 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'scrooloose/syntastic'
 Plugin 'tpope/vim-commentary'
-Plugin 'kien/ctrlp.vim'
 Plugin 'Raimondi/delimitMate'
 Plugin 'godlygeek/tabular'
-Plugin 'tomasr/molokai'
-Plugin 'chriskempson/base16-vim'
 Plugin 'chriskempson/vim-tomorrow-theme'
 Plugin 'wesQ3/vim-windowswap'
-Plugin 'bling/vim-airline'
+Plugin 'itchyny/lightline.vim'
 Plugin 'majutsushi/tagbar'
 Plugin 'tpope/vim-fugitive'
 Plugin 'vim-scripts/TagHighlight'
 Plugin 'vim-scripts/cSyntaxAfter'
-Plugin 'moll/vim-node'
 Plugin 'pangloss/vim-javascript'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'marijnh/tern_for_vim'
+Plugin 'KeitaNakamura/neodark.vim'
 
 call vundle#end()
 filetype plugin indent on
 
+let mapleader="§"
+
 set noswapfile
-colorscheme molokai
-set background=dark
+colorscheme neodark
+let g:neodark#terminal_transparent = 1
+" let g:neodark#solid_vertsplit = 1
+let g:lightline = {
+    \ 'active' : {
+    \   'left' : [['mode', 'paste'], ['fugitive'], ['readonly', 'filename', 'tagbar']],
+    \   'right' : [['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype']]
+    \ },
+    \ 'component' : {
+    \   'tagbar' : '%{tagbar#currenttag("[%s]", "")}',
+    \   'fugitive' : ' %{fugitive#head()}'
+    \ },
+    \ 'component_function' : {
+    \   'filename' : 'LightlineFilename',
+    \ }
+    \ }
+
+function! LightlineFilename()
+    let l:color = neodark#get_color('ErrorMsg', 'fg')
+    let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+    let modified = &modified ? ' +' : ''
+    return filename . modified
+endfunction
+
+let g:lightline.colorscheme = 'neodark'
 set nu
 set smartindent
+set noshowmode
 
 au BufReadPost,BufNewFile,BufEnter *.{c,cpp,h,javascript,java,js} call CSyntaxAfter()
-
-au BufReadPost *.twig colorscheme koehler 
-au BufReadPost *.css colorscheme molokai 
-au BufReadPost *.js colorscheme monokai
-au BufReadPost *.py colorscheme molokai
-au BufReadPost *.html colorscheme molokai
-au BufReadPost *.java colorscheme molokai
-au BufReadPost *.php colorscheme molokai
 
 set ruler
 set showcmd
 set mouse=a
 set ttymouse=sgr
 set showmode
+set backspace=2
 
 set list
 set listchars=trail:·,precedes:«,extends:»,eol:↲,tab:▸\
@@ -81,22 +98,10 @@ set whichwrap=b,s,<,>,[,]
 set laststatus=2
 set colorcolumn=120
 
-let g:airline_powerline_fonts = 1
-let g:airline_theme = 'powerlineish'
-
 set statusline+=%#warninmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 hi SpellCap ctermbg=208 ctermfg=16
 hi SpellBad ctermbg=9 ctermfg=16
-
-hi link SyntasticErrorLine SpellBad
-hi link SyntasticWarningLine SpellCap
-
-let g:syntastic_check_on_open=1
-let g:syntastic_check_on_wq=0
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list=1
-let g:syntastic_ignore_files = [ 'gulpfile.js' ]
 
